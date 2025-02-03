@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh - CN">
+
+<head>
+    <meta charset="UTF - 8">
+    <meta name="viewport" content="width=device - width, initial - scale = 1.0">
+    <title>密码保护视频网站</title>
+    <style>
+        /* 整体页面样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        /* 密码输入框和按钮的样式 */
+        #passwordForm {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            z - index: 1;
+        }
+
+        #passwordForm label {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #passwordInput {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+            outline: none;
+        }
+
+        #passwordForm button {
+            padding: 12px 30px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background - color 0.3s ease;
+        }
+
+        #passwordForm button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 问题框样式 */
+        #questionBox {
+            display: none;
+            background-color: #fff;
+            border: 0;
+            margin: 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: auto;
+        }
+
+        #questionBox.show {
+            display: block;
+            animation: slideIn 0.5s ease - in - out forwards, shake 0.5s ease - in - out;
+        }
+
+        @keyframes slideIn {
+            from {
+                left: -300px;
+            }
+            to {
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translate(-50%, -50%) translateX(-10px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translate(-50%, -50%) translateX(10px);
+            }
+        }
+
+        #questionBox label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        #videoUrlInput {
+            padding: 10px 15px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            outline: none;
+        }
+
+        #questionBox button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background - color 0.3s ease;
+        }
+
+        #questionBox button:hover {
+            background-color: #218838;
+        }
+
+        /* 免责协议样式 */
+        #disclaimer {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            width: 300px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #disclaimer strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 密码输入表单 -->
+    <form id="passwordForm">
+        <label for="passwordInput">请输入密码：</label>
+        <input type="password" id="passwordInput">
+        <button type="button" onclick="checkPassword()">确认</button>
+    </form>
+
+    <!-- 免责协议 -->
+    <div id="disclaimer">
+        <strong>重要声明</strong>
+        1. 本站仅提供视频链接转换服务，用户所请求播放的视频内容由第三方网站提供，视频版权归原版权方所有，与本站无关。<br>
+        2. 若因视频内容引发任何版权纠纷、法律责任或其他争议，均由视频版权方及相关责任方承担，本站不承担任何直接或间接责任。<br>
+        3. 用户在使用本站服务时，应确保自身行为符合法律法规要求，不得利用本站进行任何违法违规活动。若用户违反相关规定，由此产生的一切后果由用户自行承担。<br>
+        4. 如遇不可抗力因素（如网络故障、服务器故障等）导致服务中断或异常，本站不承担责任，但将尽力采取措施恢复服务。<br>
+        5. 本站纯属娱乐，仅向用户告知相关网站信息，不保证其可用性。<br>
+        6. 当您使用本网站时，即默认接受上述所有协议条款。
+    </div>
+
+    <!-- 问题框 -->
+    <div id="questionBox">
+        <label for="videoUrlInput">把你想要看的视频的网址发给我</label>
+        <input type="text" id="videoUrlInput">
+        <button type="button" onclick="sendVideoUrl()">提交</button>
+    </div>
+
+    <script>
+        // 正确的密码
+        const correctPassword = "123456";
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === correctPassword) {
+                document.getElementById('passwordForm').style.display = 'none';
+                document.getElementById('questionBox').classList.add('show');
+            } else {
+                alert('密码错误，请重新输入！');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function sendVideoUrl() {
+            const videoUrl = document.getElementById('videoUrlInput').value;
+            if (videoUrl) {
+                const targetUrl = 'https://jx.xmflv.cc/?url=' + encodeURIComponent(videoUrl);
+                window.open(targetUrl, '_blank');
+            } else {
+                alert('请输入视频网址');
+            }
+        }
+    </script>
+</body>
+
+</html>
